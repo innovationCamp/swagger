@@ -1,0 +1,573 @@
+openapi: "3.0.0"
+info:
+  version: "0.0.3"
+  title: "Chat App API"
+paths:
+  /user:
+    get:
+      tags:
+        - "User Management"
+      summary: "Get specific user information"
+      operationId: "getUser"
+      responses:
+        '200':
+          description: "User information retrieved successfully"
+          
+    put:
+      tags:
+        - "User Management"
+      summary: "Update user information"
+      operationId: "updateUser"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createUserDto'
+      responses:
+        '200':
+          description: "User information updated successfully"
+          
+    delete:
+      tags:
+        - "User Management"
+      summary: "Delete a user"
+      operationId: "deleteUser"
+      responses:
+        '200':
+          description: "User deleted successfully"
+
+  /user/signup:
+    post:
+      tags:
+        - "User Management"
+      summary: "User SignUp"
+      operationId: "signUpUser"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createUserDto'
+      responses:
+        '200':
+          description: "User created successfully"
+
+  /user/login:
+    post:
+      tags:
+        - "User Management"
+      summary: "User login"
+      operationId: "loginUser"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/loginUserDto'
+      responses:
+        '200':
+          description: "User logged in successfully"
+
+  /user/logout:
+    get:
+      tags:
+        - "User Management"
+      summary: "User logout"
+      operationId: "logoutUser"
+      responses:
+        '200':
+          description: "User logged out successfully"
+
+  /contact:
+    get:
+      tags:
+        - "Contact Management"
+      summary: "현재 유저의 contacts"
+      operationId: "getContacts"
+      responses:
+        '200':
+          description: "List of contacts retrieved successfully"
+    post:
+      tags:
+        - "Contact Management"
+      summary: "Add a contact"
+      operationId: "addContact"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+      responses:
+        '200':
+          description: "Contact added successfully"
+
+    delete:
+      tags:
+        - "Contact Management"
+      summary: "Remove a contact"
+      operationId: "removeContact"
+      parameters:
+        - in: header
+          name: 'email'
+          schema:
+            type: string
+          required: true
+          description: 'ex) A와 연결을 끊고 싶다하면 A email'
+      responses:
+        '200':
+          description: "Contact removed successfully"
+
+  /message/{channelId}:
+    post:
+      tags:
+        - "Message Management"
+      summary: "message 전송"
+      operationId: "createMessage"
+      parameters:
+        - name: "channelId"
+          in: "path"
+          description: "ID of the chat to delete"
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+      responses:
+        '200':
+          description: "Message sent successfully"
+          
+  /message/{messageId}:
+        
+    delete:
+      tags:
+        - "Message Management"
+      summary: "Delete a message"
+      operationId: "deleteMessage"
+      parameters:
+        - name: "messageId"
+          in: "path"
+          description: "ID of the chat to delete"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Message deleted successfully"
+  # messageId 수정이 필요할까?
+  # user가 작성한 모든 message 일단 보류
+
+  /channel:
+    post:
+      tags:
+        - "Channel Management"
+      summary: "Create new channel"
+      operationId: "createChannel"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createChannelDto'
+      responses:
+        '200':
+          description: "Channel created successfully"
+
+  /channel/{channelId}:
+    get:
+      tags:
+        - "Channel Management"
+      summary: "Get specific channel"
+      operationId: "getChannel"
+      parameters:
+        - name: "channelId"
+          in: "path"
+          description: "ID of the channel to retrieve"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Channel retrieved successfully"
+    put:
+      tags:
+        - "Channel Management"
+      summary: "Update channel"
+      operationId: "updateChannel"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createChannelDto'
+      parameters:
+        - name: "channelId"
+          in: "path"
+          description: "ID of the channel to update"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Channel updated successfully"
+    delete:
+      tags:
+        - "Channel Management"
+      summary: "Delete a channel"
+      operationId: "deleteChannel"
+      parameters:
+        - name: "channelId"
+          in: "path"
+          description: "ID of the channel to delete"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Channel deleted successfully"
+
+  /channel/{channelId}/message:
+    get:
+      tags:
+        - "Channel Management"
+      summary: "Get all messages in a channel"
+      operationId: "getChannelMessages"
+      parameters:
+        - name: "channelId"
+          in: "path"
+          description: "ID of the channel to retrieve messages from"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Messages retrieved successfully"
+
+  /channel/{channelId}/member:
+    post:
+      tags:
+        - "Channel Management"
+      summary: "Add a new member to channel"
+      operationId: "createChannelMember"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/inviteUserDto'
+      parameters:
+        - name: "channelId"
+          in: "path"
+          description: "ID of the channel to add a member to"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Member added successfully"
+
+    delete:
+      tags:
+        - "Channel Management"
+      summary: "exile a member from channel"
+      operationId: "deleteChannelMember"
+      parameters:
+        - name: "channelId"
+          in: "path"
+          description: "ID of the channel to remove a member from"
+          required: true
+          schema:
+            type: integer
+        - in: header
+          name: 'email'
+          schema:
+            type: string
+          required: true
+          description: "ex) A를 채널에서 추방하고 싶다면 A email"
+      responses:
+        '200':
+          description: "Member removed successfully"
+
+  /wallet:
+    get:
+      tags:
+        - "Wallet"
+      summary: "유저 통장 정보"
+      operationId: "getWallet"
+      responses:
+        '200':
+          description: "File retrieved successfully"
+  
+  /wallet/transaction:
+    get:
+      tags:
+        - "Wallet"
+      summary: "유저 통장 거래 기록"
+      operationId: "getWalletTransaction"
+      responses:
+        '200':
+          description: "File retrieved successfully"
+          
+  /wallet/provide:
+    post:
+      tags:
+        - "Wallet"
+      summary: "유저 통장에서 다른 유저통장으로 송금"
+      operationId: "provideWalletMoney"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/provideWalletMoneyDto'
+      responses:
+        '200':
+          description: "File retrieved successfully"
+
+  /channel-wallet/{channelWalletId}/provide:
+    post:
+      tags:
+        - "ChannelWallet"
+      summary: "채널 지갑이 누군가에게 돈을 준다"
+      operationId: "provideChannelWalletMoney"
+      parameters:
+        - name: "channelWalletId"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/provideChannelWalletMoneyDto'
+      responses:
+        '200':
+          description: "File retrieved successfully"
+          
+  /channel-wallet/{channelWalletId}/borrow:
+    post:
+      tags:
+        - "ChannelWallet"
+      summary: "채널 지갑이 누군가로부터 돈을 받는다"
+      operationId: "borrowChannelWalletMoney"
+      parameters:
+        - name: "channelWalletId"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/provideChannelWalletMoneyDto'
+      responses:
+        '200':
+          description: "File retrieved successfully"
+
+  /channel-wallet/{channelWalletId}:
+    get:
+      tags:
+        - "ChannelWallet"
+      summary: "채널 통장 정보"
+      operationId: "getChannelWallet"
+      parameters:
+        - name: "channelWalletId"
+          in: "path"
+          description: "ID of the channel to remove a member from"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "File retrieved successfully"
+
+  /channel-wallet/{channelWalletId}/transaction:
+    get:
+      tags:
+        - "ChannelWallet"
+      summary: "채널 통장의 거래 기록"
+      operationId: "getChannelWalletTransaction"
+      parameters:
+        - name: "channelWalletId"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "File retrieved successfully"
+          
+  /channel-wallet/{channelWalletId}/participant:
+    get:
+      tags:
+        - "ChannelWallet"
+      summary: "해당 채널 통장의 모든 참여자"
+      operationId: "getChannelWalletAllParticipant"
+      parameters:
+        - name: "channelWalletId"
+          in: "path"
+          description: "ID of the channel to remove a member from"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "File retrieved successfully"
+  
+  /channel-wallet/{channelId}/all:
+    get:
+      tags:
+        - "ChannelWallet"
+      summary: "해당 채널의 모든 통장 정보"
+      operationId: "getAllChannelWallet"
+      parameters:
+        - name: "channelId"
+          in: "path"
+          description: "ID of the channel to remove a member from"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "File retrieved successfully"
+
+  /notification/{channelId}:
+    get:
+      tags:
+        - "Notification Management (내부 로직용)"
+      summary: "채널에 알림 전파"
+      operationId: "generateNotification"
+      parameters:
+        - name: "channelId"
+          in: "path"
+          description: "ID of the channel to remove a member from"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Notification created successfully"
+
+  /file:
+    post:
+      tags:
+        - "File Management (내부 로직용)"
+      summary: "Upload a file"
+      operationId: "uploadFile"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: "File uploaded successfully"
+
+  /file/{fileId}:
+    get:
+      tags:
+        - "File Management (내부 로직용)"
+      summary: "Get a specific file"
+      operationId: "getFile"
+      parameters:
+        - name: "fileId"
+          in: "path"
+          description: "ID of the file to retrieve"
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "File retrieved successfully"
+    delete:
+      tags:
+        - "File Management (내부 로직용)"
+      summary: "Delete a file"
+      operationId: "deleteFile"
+      parameters:
+        - name: "fileId"
+          in: "path"
+          description: "ID of the file to delete"
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "File deleted successfully"
+
+components:
+  #-------------------------------
+  # Reusable schemas (data models)
+  #-------------------------------
+  schemas:
+    createUserDto: # Can be referenced as '#/components/schemas/SignUp'
+      type: object
+      properties:
+        email:
+          type: string
+        useranme:
+          type: string
+        password:
+          type: string
+          
+    loginUserDto:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    
+    createChannelDto:
+      type: object
+      properties:
+        channelName:
+          type: string
+        password:
+          type: string
+          
+    inviteUserDto:
+      type: object
+      properties:
+        email:
+          type: string
+    
+    provideWalletMoneyDto:
+      type: object
+      properties:
+        email:
+          type: string
+        money:
+          type: integer
+        reservationTime:
+          type: string
+
+    provideChannelWalletMoneyDto:
+      type: object
+      properties:
+        email:
+          type: string
+        money:
+          type: integer
+        reservationTime:
+          type: string
+
+servers:
+  - url: "http://localhost:8080/api"
+    description: "Local development server"
