@@ -2,11 +2,24 @@ openapi: "3.0.0"
 info:
   version: "0.0.3"
   title: "Chat App API"
+tags:
+  - name: User
+    description: 사용자
+  - name: Contact
+    description: 연락처
+  - name: Message
+    description: 텍스트 메세지
+  - name: Channel
+    description: 채널 ( 대화방 )
+  - name: Wallet
+    description: 지갑 ( 계좌 )
+  - name: ChannelWallet
+    description: 채널 지갑 ( 대화방 계좌 )
 paths:
   /user:
     get:
       tags:
-        - "User Management"
+        - User
       summary: "Get specific user information"
       operationId: "getUser"
       responses:
@@ -15,7 +28,7 @@ paths:
           
     put:
       tags:
-        - "User Management"
+        - User
       summary: "Update user information"
       operationId: "updateUser"
       requestBody:
@@ -30,7 +43,7 @@ paths:
           
     delete:
       tags:
-        - "User Management"
+        - User
       summary: "Delete a user"
       operationId: "deleteUser"
       responses:
@@ -40,7 +53,7 @@ paths:
   /user/signup:
     post:
       tags:
-        - "User Management"
+        - User
       summary: "User SignUp"
       operationId: "signUpUser"
       requestBody:
@@ -56,7 +69,7 @@ paths:
   /user/login:
     post:
       tags:
-        - "User Management"
+        - User
       summary: "User login"
       operationId: "loginUser"
       requestBody:
@@ -72,7 +85,7 @@ paths:
   /user/logout:
     get:
       tags:
-        - "User Management"
+        - User
       summary: "User logout"
       operationId: "logoutUser"
       responses:
@@ -82,7 +95,7 @@ paths:
   /contact:
     get:
       tags:
-        - "Contact Management"
+        - Contact
       summary: "현재 유저의 contacts"
       operationId: "getContacts"
       responses:
@@ -90,7 +103,7 @@ paths:
           description: "List of contacts retrieved successfully"
     post:
       tags:
-        - "Contact Management"
+        - Contact
       summary: "Add a contact"
       operationId: "addContact"
       requestBody:
@@ -108,7 +121,7 @@ paths:
 
     delete:
       tags:
-        - "Contact Management"
+        - Contact
       summary: "Remove a contact"
       operationId: "removeContact"
       parameters:
@@ -125,7 +138,7 @@ paths:
   /message/{channelId}:
     post:
       tags:
-        - "Message Management"
+        - Message
       summary: "message 전송"
       operationId: "createMessage"
       parameters:
@@ -152,7 +165,7 @@ paths:
         
     delete:
       tags:
-        - "Message Management"
+        - Message
       summary: "Delete a message"
       operationId: "deleteMessage"
       parameters:
@@ -171,7 +184,7 @@ paths:
   /channel:
     post:
       tags:
-        - "Channel Management"
+        - Channel
       summary: "Create new channel"
       operationId: "createChannel"
       requestBody:
@@ -187,7 +200,7 @@ paths:
   /channel/{channelId}:
     get:
       tags:
-        - "Channel Management"
+        - Channel
       summary: "Get specific channel"
       operationId: "getChannel"
       parameters:
@@ -202,7 +215,7 @@ paths:
           description: "Channel retrieved successfully"
     put:
       tags:
-        - "Channel Management"
+        - Channel
       summary: "Update channel"
       operationId: "updateChannel"
       requestBody:
@@ -223,7 +236,7 @@ paths:
           description: "Channel updated successfully"
     delete:
       tags:
-        - "Channel Management"
+        - Channel
       summary: "Delete a channel"
       operationId: "deleteChannel"
       parameters:
@@ -240,7 +253,7 @@ paths:
   /channel/{channelId}/message:
     get:
       tags:
-        - "Channel Management"
+        - Channel
       summary: "Get all messages in a channel"
       operationId: "getChannelMessages"
       parameters:
@@ -257,7 +270,7 @@ paths:
   /channel/{channelId}/member:
     post:
       tags:
-        - "Channel Management"
+        - Channel
       summary: "Add a new member to channel"
       operationId: "createChannelMember"
       requestBody:
@@ -279,7 +292,7 @@ paths:
 
     delete:
       tags:
-        - "Channel Management"
+        - Channel
       summary: "exile a member from channel"
       operationId: "deleteChannelMember"
       parameters:
@@ -302,7 +315,7 @@ paths:
   /wallet:
     get:
       tags:
-        - "Wallet"
+        - Wallet
       summary: "유저 통장 정보"
       operationId: "getWallet"
       responses:
@@ -312,7 +325,7 @@ paths:
   /wallet/transaction:
     get:
       tags:
-        - "Wallet"
+        - Wallet
       summary: "유저 통장 거래 기록"
       operationId: "getWalletTransaction"
       responses:
@@ -322,7 +335,7 @@ paths:
   /wallet/provide:
     post:
       tags:
-        - "Wallet"
+        - Wallet
       summary: "유저 통장에서 다른 유저통장으로 송금"
       operationId: "provideWalletMoney"
       requestBody:
@@ -338,7 +351,7 @@ paths:
   /channel-wallet/{channelWalletId}/provide:
     post:
       tags:
-        - "ChannelWallet"
+        - ChannelWallet
       summary: "채널 지갑이 누군가에게 돈을 준다"
       operationId: "provideChannelWalletMoney"
       parameters:
@@ -360,7 +373,7 @@ paths:
   /channel-wallet/{channelWalletId}/borrow:
     post:
       tags:
-        - "ChannelWallet"
+        - ChannelWallet
       summary: "채널 지갑이 누군가로부터 돈을 받는다"
       operationId: "borrowChannelWalletMoney"
       parameters:
@@ -382,7 +395,7 @@ paths:
   /channel-wallet/{channelWalletId}:
     get:
       tags:
-        - "ChannelWallet"
+        - ChannelWallet
       summary: "채널 통장 정보"
       operationId: "getChannelWallet"
       parameters:
@@ -399,7 +412,7 @@ paths:
   /channel-wallet/{channelWalletId}/transaction:
     get:
       tags:
-        - "ChannelWallet"
+        - ChannelWallet
       summary: "채널 통장의 거래 기록"
       operationId: "getChannelWalletTransaction"
       parameters:
@@ -415,7 +428,7 @@ paths:
   /channel-wallet/{channelWalletId}/participant:
     get:
       tags:
-        - "ChannelWallet"
+        - ChannelWallet
       summary: "해당 채널 통장의 모든 참여자"
       operationId: "getChannelWalletAllParticipant"
       parameters:
@@ -432,7 +445,7 @@ paths:
   /channel-wallet/{channelId}/all:
     get:
       tags:
-        - "ChannelWallet"
+        - ChannelWallet
       summary: "해당 채널의 모든 통장 정보"
       operationId: "getAllChannelWallet"
       parameters:
