@@ -12,9 +12,7 @@ tags:
   - name: Channel
     description: 채널 ( 대화방 )
   - name: Wallet
-    description: 지갑 ( 계좌 )
-  - name: ChannelWallet
-    description: 채널 지갑 ( 대화방 계좌 )
+    description: 뱅킹
 paths:
   /user:
     get:
@@ -312,129 +310,61 @@ paths:
         '200':
           description: "Member removed successfully"
 
-  /wallet:
-    get:
-      tags:
-        - Wallet
-      summary: "유저 통장 정보"
-      operationId: "getWallet"
-      responses:
-        '200':
-          description: "File retrieved successfully"
-  
-  /wallet/transaction:
-    get:
-      tags:
-        - Wallet
-      summary: "유저 통장 거래 기록"
-      operationId: "getWalletTransaction"
-      responses:
-        '200':
-          description: "File retrieved successfully"
-          
   /wallet/provide:
     post:
       tags:
         - Wallet
-      summary: "유저 통장에서 다른 유저통장으로 송금"
+      summary: "송금"
       operationId: "provideWalletMoney"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/provideWalletMoneyDto'
-      responses:
-        '200':
-          description: "File retrieved successfully"
-
-  /channel-wallet/{channelWalletId}/provide:
-    post:
-      tags:
-        - ChannelWallet
-      summary: "채널 지갑이 누군가에게 돈을 준다"
-      operationId: "provideChannelWalletMoney"
-      parameters:
-        - name: "channelWalletId"
-          in: "path"
-          required: true
-          schema:
-            type: integer
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/provideChannelWalletMoneyDto'
+              $ref: '#/components/schemas/provideWalletDto'
       responses:
         '200':
           description: "File retrieved successfully"
           
-  /channel-wallet/{channelWalletId}/borrow:
-    post:
+  /wallet/personal:
+    get:
       tags:
-        - ChannelWallet
-      summary: "채널 지갑이 누군가로부터 돈을 받는다"
-      operationId: "borrowChannelWalletMoney"
-      parameters:
-        - name: "channelWalletId"
-          in: "path"
-          required: true
-          schema:
-            type: integer
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/provideChannelWalletMoneyDto'
+        - Wallet
+      summary: "유저 personalWallet 정보"
+      operationId: "getPersonalWallet"
+      responses:
+        '200':
+          description: "File retrieved successfully"
+  
+  /wallet/personal/transaction:
+    get:
+      tags:
+        - Wallet
+      summary: "유저 personalWallet 거래 정보"
+      operationId: "getPersonalWalletTransaction"
       responses:
         '200':
           description: "File retrieved successfully"
 
-  /channel-wallet/{channelWalletId}:
+  /wallet/personal/group/all:
     get:
       tags:
-        - ChannelWallet
-      summary: "채널 통장 정보"
-      operationId: "getChannelWallet"
-      parameters:
-        - name: "channelWalletId"
-          in: "path"
-          description: "ID of the channel to remove a member from"
-          required: true
-          schema:
-            type: integer
+        - Wallet
+      summary: "유저가 속한 모든 groupWallet 정보"
+      operationId: "getAllGroupWalletByUser"
       responses:
         '200':
           description: "File retrieved successfully"
 
-  /channel-wallet/{channelWalletId}/transaction:
+  /wallet/group/{groupWalletId}:
     get:
       tags:
-        - ChannelWallet
-      summary: "채널 통장의 거래 기록"
-      operationId: "getChannelWalletTransaction"
+        - Wallet
+      summary: "특정 groupWallet 정보"
+      operationId: "getGroupWallet"
       parameters:
-        - name: "channelWalletId"
+        - name: "groupWalletId"
           in: "path"
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: "File retrieved successfully"
-          
-  /channel-wallet/{channelWalletId}/participant:
-    get:
-      tags:
-        - ChannelWallet
-      summary: "해당 채널 통장의 모든 참여자"
-      operationId: "getChannelWalletAllParticipant"
-      parameters:
-        - name: "channelWalletId"
-          in: "path"
-          description: "ID of the channel to remove a member from"
           required: true
           schema:
             type: integer
@@ -442,19 +372,50 @@ paths:
         '200':
           description: "File retrieved successfully"
   
-  /channel-wallet/{channelId}/all:
+  /wallet/group/{groupWalletId}/transaction:
     get:
       tags:
-        - ChannelWallet
-      summary: "해당 채널의 모든 통장 정보"
-      operationId: "getAllChannelWallet"
+        - Wallet
+      summary: "특정 groupWallet 거래 정보"
+      operationId: "getGroupWalletTransaction"
       parameters:
-        - name: "channelId"
+        - name: "groupWalletId"
           in: "path"
-          description: "ID of the channel to remove a member from"
           required: true
           schema:
             type: integer
+      responses:
+        '200':
+          description: "File retrieved successfully"
+          
+  /wallet/group/{groupWalletId}/participant:
+    get:
+      tags:
+        - Wallet
+      summary: "특정 groupWallet에 참여자 정보"
+      operationId: "getGroupWalletParticipant"
+      parameters:
+        - name: "groupWalletId"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "File retrieved successfully"
+    
+  /wallet/channel/{channelId}/all:
+    get:
+      tags:
+        - Wallet
+      summary: "해당 채널의 모든 groupWallet 정보"
+      operationId: "getAllGroupWalletByChannelId"
+      parameters:
+      - name: "channelId"
+        in: "path"
+        required: true
+        schema:
+          type: integer
       responses:
         '200':
           description: "File retrieved successfully"
@@ -561,11 +522,13 @@ components:
         email:
           type: string
     
-    provideWalletMoneyDto:
+    provideWalletDto:
       type: object
       properties:
-        email:
-          type: string
+        walletId:
+          type: integer
+        targetWalletId:
+          type: integer
         money:
           type: integer
         reservationTime:
