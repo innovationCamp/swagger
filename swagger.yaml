@@ -11,8 +11,11 @@ tags:
     description: 텍스트 메세지
   - name: Channel
     description: 채널 ( 대화방 )
-  - name: Wallet
-    description: 뱅킹
+  - name: wallet
+    description: 공통 wallet
+  - name: wallet/personal
+  - name: wallet/group
+  - name: wallet/channel
 paths:
   /user:
     get:
@@ -313,7 +316,7 @@ paths:
   /wallet/provide:
     post:
       tags:
-        - Wallet
+        - wallet
       summary: "송금"
       operationId: "provideWalletMoney"
       requestBody:
@@ -329,9 +332,31 @@ paths:
   /wallet/personal:
     get:
       tags:
-        - Wallet
+        - wallet/personal
       summary: "유저 personalWallet 정보"
       operationId: "getPersonalWallet"
+      responses:
+        '200':
+          description: "File retrieved successfully"
+    post:
+      tags:
+        - wallet/personal
+      summary: "유저 personalWallet 개설"
+      operationId: "createPersonalWallet"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createPersonalWalletDto'
+      responses:
+        '200':
+          description: "File retrieved successfully"
+    delete:
+      tags:
+        - wallet/personal
+      summary: "유저 personalWallet 삭제"
+      operationId: "deletePersonalWallet"
       responses:
         '200':
           description: "File retrieved successfully"
@@ -339,7 +364,7 @@ paths:
   /wallet/personal/transaction:
     get:
       tags:
-        - Wallet
+        - wallet/personal
       summary: "유저 personalWallet 거래 정보"
       operationId: "getPersonalWalletTransaction"
       responses:
@@ -349,9 +374,25 @@ paths:
   /wallet/personal/group/all:
     get:
       tags:
-        - Wallet
+        - wallet/personal
       summary: "유저가 속한 모든 groupWallet 정보"
       operationId: "getAllGroupWalletByUser"
+      responses:
+        '200':
+          description: "File retrieved successfully"
+          
+  /wallet/group:
+    post:
+      tags:
+        - wallet/group
+      summary: "groupWallet 개설"
+      operationId: "createGroupWallet"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createGroupWalletDto'
       responses:
         '200':
           description: "File retrieved successfully"
@@ -359,9 +400,9 @@ paths:
   /wallet/group/{groupWalletId}:
     get:
       tags:
-        - Wallet
+        - wallet/group
       summary: "특정 groupWallet 정보"
-      operationId: "getGroupWallet"
+      operationId: "getGroupWalletById"
       parameters:
         - name: "groupWalletId"
           in: "path"
@@ -371,11 +412,26 @@ paths:
       responses:
         '200':
           description: "File retrieved successfully"
+          
+    delete:
+      tags:
+        - wallet/group
+      summary: "특정 groupWallet 삭제"
+      operationId: "deleteGroupWalletById"
+      parameters:
+        - name: "groupWalletId"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "File retrieved successfully"  
   
   /wallet/group/{groupWalletId}/transaction:
     get:
       tags:
-        - Wallet
+        - wallet/group
       summary: "특정 groupWallet 거래 정보"
       operationId: "getGroupWalletTransaction"
       parameters:
@@ -391,7 +447,7 @@ paths:
   /wallet/group/{groupWalletId}/participant:
     get:
       tags:
-        - Wallet
+        - wallet/group
       summary: "특정 groupWallet에 참여자 정보"
       operationId: "getGroupWalletParticipant"
       parameters:
@@ -407,7 +463,7 @@ paths:
   /wallet/channel/{channelId}/all:
     get:
       tags:
-        - Wallet
+        - wallet/channel
       summary: "해당 채널의 모든 groupWallet 정보"
       operationId: "getAllGroupWalletByChannelId"
       parameters:
@@ -533,15 +589,21 @@ components:
           type: integer
         reservationTime:
           type: string
-
-    provideChannelWalletMoneyDto:
+    
+    createPersonalWalletDto:
       type: object
       properties:
-        email:
+        password:
           type: string
-        money:
-          type: integer
-        reservationTime:
+          
+    createGroupWalletDto:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        password:
           type: string
 
 servers:
