@@ -98,7 +98,7 @@ paths:
       tags:
         - Contact
       summary: "현재 유저의 contacts"
-      operationId: "getContacts"
+      operationId: "getAllContact"
       responses:
         '200':
           description: "List of contacts retrieved successfully"
@@ -106,16 +106,14 @@ paths:
       tags:
         - Contact
       summary: "Add a contact"
-      operationId: "addContact"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
+      operationId: "createContact"
+      parameters:
+        - in: header
+          name: 'email'
+          schema:
+            type: string
+          required: true
+          description: 'ex) 연결된 대상의 정보'
       responses:
         '200':
           description: "Contact added successfully"
