@@ -13,7 +13,7 @@ tags:
     description: 채널 ( 대화방 )
   - name: wallet
     description: 공통 wallet
-  - name: wallet/personal
+  - name: wallet/user
   - name: wallet/group
   - name: wallet/channel
 paths:
@@ -327,10 +327,10 @@ paths:
         '200':
           description: "File retrieved successfully"
           
-  /wallet/personal:
+  /wallet/user:
     get:
       tags:
-        - wallet/personal
+        - wallet/user
       summary: "유저 personalWallet 정보"
       operationId: "getPersonalWallet"
       responses:
@@ -338,7 +338,7 @@ paths:
           description: "File retrieved successfully"
     post:
       tags:
-        - wallet/personal
+        - wallet/user
       summary: "유저 personalWallet 개설"
       operationId: "createPersonalWallet"
       requestBody:
@@ -352,27 +352,27 @@ paths:
           description: "File retrieved successfully"
     delete:
       tags:
-        - wallet/personal
+        - wallet/user
       summary: "유저 personalWallet 삭제"
       operationId: "deletePersonalWallet"
       responses:
         '200':
           description: "File retrieved successfully"
   
-  /wallet/personal/transaction:
+  /wallet/user/transaction:
     get:
       tags:
-        - wallet/personal
+        - wallet/user
       summary: "유저 personalWallet 거래 정보"
-      operationId: "getPersonalWalletTransaction"
+      operationId: "getAllTransactionByPersonalWallet"
       responses:
         '200':
           description: "File retrieved successfully"
 
-  /wallet/personal/group/all:
+  /wallet/user/group/all:
     get:
       tags:
-        - wallet/personal
+        - wallet/user
       summary: "유저가 속한 모든 groupWallet 정보"
       operationId: "getAllGroupWalletByUser"
       responses:
@@ -410,7 +410,20 @@ paths:
       responses:
         '200':
           description: "File retrieved successfully"
-          
+    post:
+      tags:
+        - wallet/group
+      summary: "특정 groupWallet 참여"
+      operationId: "participantGroupWalletById"
+      parameters:
+        - name: "groupWalletId"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "File retrieved successfully"
     delete:
       tags:
         - wallet/group
@@ -426,12 +439,12 @@ paths:
         '200':
           description: "File retrieved successfully"  
   
-  /wallet/group/{groupWalletId}/transaction:
+  /wallet/group/{groupWalletId}/transaction/all:
     get:
       tags:
         - wallet/group
-      summary: "특정 groupWallet 거래 정보"
-      operationId: "getGroupWalletTransaction"
+      summary: "특정 groupWallet 모든 거래 정보"
+      operationId: "getAllTransactionByGroupWallet"
       parameters:
         - name: "groupWalletId"
           in: "path"
@@ -442,12 +455,12 @@ paths:
         '200':
           description: "File retrieved successfully"
           
-  /wallet/group/{groupWalletId}/participant:
+  /wallet/group/{groupWalletId}/participant/all:
     get:
       tags:
         - wallet/group
-      summary: "특정 groupWallet에 참여자 정보"
-      operationId: "getGroupWalletParticipant"
+      summary: "특정 groupWallet에 모든 참여자 정보"
+      operationId: "getAllParticipantByGroupWallet"
       parameters:
         - name: "groupWalletId"
           in: "path"
@@ -597,7 +610,9 @@ components:
     createGroupWalletDto:
       type: object
       properties:
-        title:
+        channelId:
+          type: integer
+        walletName:
           type: string
         description:
           type: string
