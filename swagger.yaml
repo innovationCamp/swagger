@@ -15,7 +15,6 @@ tags:
     description: 공통 wallet
   - name: wallet/user
   - name: wallet/group
-  - name: wallet/channel
 paths:
   /user:
     get:
@@ -311,18 +310,18 @@ paths:
         '200':
           description: "Member removed successfully"
 
-  /wallet/provide:
+  /wallet/transaction:
     post:
       tags:
         - wallet
       summary: "송금"
-      operationId: "provideWalletMoney"
+      operationId: "createTransaction"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/provideWalletDto'
+              $ref: '#/components/schemas/createTransactionDto'
       responses:
         '200':
           description: "File retrieved successfully"
@@ -359,7 +358,7 @@ paths:
         '200':
           description: "File retrieved successfully"
   
-  /wallet/user/transaction:
+  /wallet/user/transaction/all:
     get:
       tags:
         - wallet/user
@@ -471,10 +470,10 @@ paths:
         '200':
           description: "File retrieved successfully"
     
-  /wallet/channel/{channelId}/all:
+  /wallet/group/all/channel/{channelId}:
     get:
       tags:
-        - wallet/channel
+        - wallet/group
       summary: "해당 채널의 모든 groupWallet 정보"
       operationId: "getAllGroupWalletByChannelId"
       parameters:
@@ -589,14 +588,14 @@ components:
         email:
           type: string
     
-    provideWalletDto:
+    createTransactionDto:
       type: object
       properties:
         walletId:
           type: integer
         targetWalletId:
           type: integer
-        money:
+        amount:
           type: integer
         reservationTime:
           type: string
