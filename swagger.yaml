@@ -1,16 +1,17 @@
 openapi: "3.0.0"
 info:
-  version: "0.0.3"
-  title: "Chat App API"
+  version: "0.1"
+  title: "회비관리 메신저 API"
+  description: '본 문서는 https://github.com/innovationCamp/swagger 에 등록된 버전입니다'
 tags:
+  - name: ChannelController
+    description: '@RequestAttribute User로 현재 사용자 정보 확인'
   - name: User
     description: 사용자
   - name: Contact
     description: 연락처
   - name: Message
     description: 텍스트 메세지
-  - name: Channel
-    description: 채널 ( 대화방 )
   - name: wallet
     description: 공통 wallet
   - name: wallet/user
@@ -179,136 +180,167 @@ paths:
   # messageId 수정이 필요할까?
   # user가 작성한 모든 message 일단 보류
 
-  /channel:
-    post:
-      tags:
-        - Channel
-      summary: "Create new channel"
-      operationId: "createChannel"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/createChannelDto'
-      responses:
-        '200':
-          description: "Channel created successfully"
-
   /channel/{channelId}:
     get:
       tags:
-        - Channel
-      summary: "Get specific channel"
-      operationId: "getChannel"
+        - ChannelController
+      summary: 채널 id를 사용하여 특정 채널 조회
+      operationId: getChannel
       parameters:
-        - name: "channelId"
-          in: "path"
-          description: "ID of the channel to retrieve"
+        - name: channelId
+          in: path
           required: true
           schema:
             type: integer
+            format: int64
       responses:
         '200':
-          description: "Channel retrieved successfully"
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GetChannelDto'
     put:
       tags:
-        - Channel
-      summary: "Update channel"
-      operationId: "updateChannel"
+        - ChannelController
+      summary: 채널 id를 사용하여 특정 채널 수정
+      operationId: updateChannel
+      parameters:
+        - name: channelId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/createChannelDto'
-      parameters:
-        - name: "channelId"
-          in: "path"
-          description: "ID of the channel to update"
-          required: true
-          schema:
-            type: integer
+              $ref: '#/components/schemas/UpdateChannelRequestDto'
+        required: true
       responses:
         '200':
-          description: "Channel updated successfully"
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UpdateChannelResponseDto'
     delete:
       tags:
-        - Channel
-      summary: "Delete a channel"
-      operationId: "deleteChannel"
+        - ChannelController
+      summary: 채널 id를 사용하여 특정 채널 삭제
+      operationId: deleteChannel
       parameters:
-        - name: "channelId"
-          in: "path"
-          description: "ID of the channel to delete"
+        - name: channelId
+          in: path
           required: true
           schema:
             type: integer
+            format: int64
       responses:
         '200':
-          description: "Channel deleted successfully"
-
-  /channel/{channelId}/message:
+          description: OK
+  
+  /channel:
     get:
       tags:
-        - Channel
-      summary: "Get all messages in a channel"
-      operationId: "getChannelMessages"
-      parameters:
-        - name: "channelId"
-          in: "path"
-          description: "ID of the channel to retrieve messages from"
-          required: true
-          schema:
-            type: integer
+        - ChannelController
+      summary: 사용자가 참여중인 채널 목록을 조회합니다.
+      operationId: getAllChannelUserIn
       responses:
         '200':
-          description: "Messages retrieved successfully"
-
-  /channel/{channelId}/member:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetAllChannelUserInDto'
     post:
       tags:
-        - Channel
-      summary: "Add a new member to channel"
-      operationId: "createChannelMember"
+        - ChannelController
+      summary: 채널 생성
+      description: 채널 생성 후 사용자를 관리자 권한으로 채널에 등록합니다.
+      operationId: createChannel
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/inviteUserDto'
+              $ref: '#/components/schemas/CreateChannelRequestDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CreateChannelResponseDto'
+  /channel/{channelId}/user/{userId}:
+    post:
+      tags:
+        - ChannelController
+      summary: 특정 채널에 유저 추가
+      operationId: addUserToChannel
       parameters:
-        - name: "channelId"
-          in: "path"
-          description: "ID of the channel to add a member to"
+        - name: channelId
+          in: path
           required: true
           schema:
             type: integer
+            format: int64
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
-          description: "Member added successfully"
-
+          description: OK
     delete:
       tags:
-        - Channel
-      summary: "exile a member from channel"
-      operationId: "deleteChannelMember"
+        - ChannelController
+      summary: 특정 채널에서 유저 추방
+      operationId: kickUserFromChannel
       parameters:
-        - name: "channelId"
-          in: "path"
-          description: "ID of the channel to remove a member from"
+        - name: channelId
+          in: path
           required: true
           schema:
             type: integer
-        - in: header
-          name: 'email'
-          schema:
-            type: string
+            format: int64
+        - name: userId
+          in: path
           required: true
-          description: "ex) A를 채널에서 추방하고 싶다면 A email"
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
-          description: "Member removed successfully"
+          description: OK
+  
+  /channel/{channelId}/content:
+    get:
+      tags:
+        - ChannelController
+      summary: 특정 채널의 채널 내용 전체 조회
+      operationId: getChannelContents
+      parameters:
+        - name: channelId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetChannelContentDto'
 
   /wallet/transaction:
     post:
@@ -574,13 +606,94 @@ components:
         password:
           type: string
     
-    createChannelDto:
+    UpdateChannelRequestDto:
       type: object
       properties:
         channelName:
           type: string
-        password:
+        channelPassword:
           type: string
+        channelDescription:
+          type: string
+      description: 채널 수정 request Dto
+    UpdateChannelResponseDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        channelName:
+          type: string
+        channelDescription:
+          type: string
+      description: 채널 수정 response Dto
+   
+    CreateChannelRequestDto:
+      type: object
+      properties:
+        channelName:
+          type: string
+        channelPassword:
+          type: string
+        channelDescription:
+          type: string
+      description: 새 채널 생성 request Dto
+    CreateChannelResponseDto:
+      type: object
+      properties:
+        channelId:
+          type: integer
+          format: int64
+        channelCreateUserEmail:
+          type: string
+        channelName:
+          type: string
+        channelDescription:
+          type: string
+      description: 새 채널 생성 response Dto
+    GetAllChannelUserInDto:
+      type: object
+      properties:
+        channelId:
+          type: integer
+          format: int64
+        readTimestamp:
+          type: string
+          format: date-time
+        admin:
+          type: boolean
+      description: 유저가 가입한 채널 조회 response Dto
+    GetChannelDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        channelName:
+          type: string
+        channelDescription:
+          type: string
+      description: 채널 한 개의 정보 조회 response Dto
+    GetChannelContentDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        userEmail:
+          type: string
+        userName:
+          type: string
+        callOutContentId:
+          type: integer
+          format: int64
+        createdAt:
+          type: string
+          format: date-time
+        notReadCount:
+          type: integer
+          format: int64
+      description: ChannelContent 조회 response Dto
           
     inviteUserDto:
       type: object
