@@ -1,0 +1,40 @@
+name: Convert Swagger JSON to YAML
+
+on:
+  push:
+    branches:
+      - master # Adjust with the branch you want the action to run on
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Start the application
+        run: |
+          # Start your application here; You might use Maven or Gradle or any other method
+          ./mvnw spring-boot:run &
+          sleep 60 # give some time for the app to start
+
+      - name: Fetch Swagger JSON (OAS 3)
+        run: |
+          curl http://localhost:8080/v3/api-docs -o swagger.json
+
+      - name: Install json2yaml
+        run: |
+          npm install -g json2yaml
+
+      - name: Convert JSON to YAML
+        run: |
+          json2yaml swagger.json > swagger.yaml
+
+      - name: Commit and push YAML
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add swagger.yaml
+          git commit -m "Update Swagger YAML" -a
+          git push
