@@ -278,7 +278,6 @@ paths:
       description: |-
         채널 생성 후 사용자를 관리자 권한으로 채널에 등록합니다.
 
-        RequestBody가 null인 경우에도 생성할 수 있으며( 기본값: '{username}의 채널' ),
 
         생성 성공시 채널 정보와 생성한 사용자의 username을 리턴합니다.
       operationId: createChannel
@@ -287,6 +286,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CreateChannelRequestDto'
+        required: true
       responses:
         '200':
           description: OK
